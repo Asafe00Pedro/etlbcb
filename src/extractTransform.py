@@ -19,3 +19,25 @@ def requestApiBcb(data: str) -> pd.DataFrame:
 
 dadosBcb = requestApiBcb("20191")
 print(dadosBcb.info())
+
+def extrair_tratar_selic():
+    url = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoSelic?%24top=1000&%24format=json"
+    resposta = requests.get(url)
+    dados = resposta.json()
+
+    df = pd.DataFrame(dados['value'])
+
+    print("Colunas recebidas da API:")
+    print(df.columns)
+
+    
+    colunas_interesse = ['Data', 'Media', 'Minimo', 'Maximo', 'Mediana']
+    df = df[colunas_interesse]
+
+    
+    df['Data'] = pd.to_datetime(df['Data'])
+
+
+    
+    df.to_csv('src/datasets/selic_expectativas.csv', index=False)
+    print(" Dados da Selic extraídos e salvos com sucesso.")
